@@ -7,8 +7,6 @@
 
 A powerful GUI-based Windows Event Log analysis tool designed for Security Operations Centers (SOC), forensic analysts, and system administrators. Search and analyze event logs from both live machines and imported EVTX files with an intuitive interface.
 
-![Event Log Viewer](https://via.placeholder.com/800x400/2C3E50/ECF0F1?text=Enhanced+Event+Log+Viewer+v2.0)
-
 ---
 
 ## 📋 Executive Summary
