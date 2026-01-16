@@ -292,26 +292,26 @@ This eliminates the need to memorize event ID numbers.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  [Category Selection: 14 radio buttons across 3 rows]  │
+│  [Category Selection: 14 radio buttons across 3 rows]   │
 ├─────────────────────────────────────────────────────────┤
-│  Source: [Live/Imported]  Computer: [____]             │
-│  Start Date: [____]  End Date: [____]                  │
-│  Event ID: [Dropdown]  Text Search: [____]             │
+│  Source: [Live/Imported]  Computer: [____]              │
+│  Start Date: [____]  End Date: [____]                   │
+│  Event ID: [Dropdown]  Text Search: [____]              │
 ├─────────────────────────────────────────────────────────┤
-│  [Search] [Stop] [Clear] | [Import] [Manage Files]    │
+│  [Search] [Stop] [Clear] | [Import] [Manage Files]      │
 │  [Export CSV] [Export Excel] [Web Search] [Auto-Refresh]│
 ├─────────────────────────────────────────────────────────┤
-│  Status: "Showing 1-100 of 4,177 events"               │
+│  Status: "Showing 1-100 of 4,177 events"                │
 ├─────────────────────────────────────────────────────────┤
-│  ┌───────────────────────────────────────────────────┐ │
-│  │   [Event Grid - 7 columns]                       │ │
-│  │   Time | Log | Source | ID | Meaning | Level | Msg│ │
-│  │   ─────────────────────────────────────────────── │ │
-│  │   2025-01-16 14:32:18 | Security | ...           │ │
-│  │   2025-01-16 14:31:05 | Security | ...           │ │
-│  └───────────────────────────────────────────────────┘ │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │   [Event Grid - 7 columns]                        │  │
+│  │   Time | Log | Source | ID | Meaning | Level | Msg│  │
+│  │   ─────────────────────────────────────────────── │  │
+│  │   2025-01-16 14:32:18 | Security | ...            │  │
+│  │   2025-01-16 14:31:05 | Security | ...            │  │
+│  └───────────────────────────────────────────────────┘  │
 ├─────────────────────────────────────────────────────────┤
-│  [First] [Prev]  Page 1 of 42  [Next] [Last]  Per Page│
+│  [First] [Prev]  Page 1 of 42  [Next] [Last]  Per Page  │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -405,7 +405,7 @@ Test-WSMan -ComputerName SERVER01
 
 ### Learning Resources
 
-- [Microsoft Event ID Documentation](https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/audit-policy)
+- [Microsoft Event ID](https://learn.microsoft.com/en-us/shows/inside/event-viewer)
 - [Sysmon Configuration Guide](https://github.com/SwiftOnSecurity/sysmon-config)
 - [Windows Event Log Reference](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
 - [SANS Digital Forensics Posters](https://www.sans.org/posters/)
@@ -481,28 +481,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🗺️ Roadmap
 
-### Planned Features (v2.1)
-
-- [ ] Timeline visualization of events
-- [ ] Bookmark/favorite specific events
-- [ ] Custom category creation
-- [ ] JSON/XML export formats
-- [ ] Event correlation engine
-- [ ] Dark mode theme
-- [ ] Multi-computer parallel search
-- [ ] Integration with SIEM platforms
-
-### Future Considerations (v3.0)
-
-- [ ] Web-based interface
-- [ ] RESTful API for automation
-- [ ] Machine learning anomaly detection
-- [ ] Cloud log source support (Azure, AWS)
-- [ ] Collaborative investigation features
-
----
 
 <div align="center">
 
