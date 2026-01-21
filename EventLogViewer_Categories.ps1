@@ -1,5 +1,5 @@
 # Enhanced Event Log Viewer v2.0
-# Category Definitions - Save as: 2_EventLogViewer_Categories.ps1
+# Category Definitions - Save as: EventLogViewer_Categories.ps1
 # COMPLETE FILE - All event categories and definitions
 # Includes SOC/Forensic analyst logs (Sysmon, PowerShell, Defender, etc.)
 
@@ -212,6 +212,21 @@ $script:categories = @{
             @{ ID = 24579; Meaning = "BitLocker encryption paused" }
             @{ ID = 24580; Meaning = "BitLocker decryption started" }
             @{ ID = 24622; Meaning = "BitLocker unlock failed" }
+        )
+    }
+    
+    "KerberosKDC" = @{
+        Log = "System"
+        IDs = @(
+            @{ ID = 205; Meaning = "Service account using weak RC4 encryption" }
+            @{ ID = 206; Meaning = "KDC certificate about to expire" }
+            @{ ID = 207; Meaning = "KDC certificate expired" }
+            @{ ID = 27; Meaning = "KDC failed to find suitable certificate" }
+            @{ ID = 28; Meaning = "KDC using self-signed certificate" }
+            @{ ID = 29; Meaning = "KDC certificate missing Extended Key Usage" }
+            @{ ID = 30; Meaning = "KDC received invalid request" }
+            @{ ID = 31; Meaning = "KDC processing error" }
+            @{ ID = 32; Meaning = "KDC unable to generate referral" }
         )
     }
 }

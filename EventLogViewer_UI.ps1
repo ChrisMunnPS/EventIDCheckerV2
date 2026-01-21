@@ -1,6 +1,3 @@
-# Enhanced Event Log Viewer v2.0
-
-
 function Initialize-MainWindow {
     <#
     .SYNOPSIS
@@ -52,6 +49,7 @@ function Initialize-MainWindow {
                 <RadioButton x:Name="rbCodeIntegrity" Content="Code Integrity" GroupName="Category" Margin="10,5" VerticalAlignment="Center"/>
                 <RadioButton x:Name="rbWMI" Content="WMI Activity" GroupName="Category" Margin="10,5" VerticalAlignment="Center"/>
                 <RadioButton x:Name="rbBitLocker" Content="BitLocker" GroupName="Category" Margin="10,5" VerticalAlignment="Center"/>
+                <RadioButton x:Name="rbKerberosKDC" Content="Kerberos/KDC" GroupName="Category" Margin="10,5" VerticalAlignment="Center"/>
             </StackPanel>
         </GroupBox>
         
@@ -169,7 +167,7 @@ function Initialize-MainWindow {
     $reader = New-Object System.Xml.XmlNodeReader $xaml
     $script:window = [Windows.Markup.XamlReader]::Load($reader)
     
-    # Create controls hashtable - ALL 14 CATEGORIES
+    # Create controls hashtable - ALL 15 CATEGORIES
     $script:controls = @{
         rbAccountActivity = $script:window.FindName("rbAccountActivity")
         rbADAccountChanges = $script:window.FindName("rbADAccountChanges")
@@ -185,6 +183,7 @@ function Initialize-MainWindow {
         rbCodeIntegrity = $script:window.FindName("rbCodeIntegrity")
         rbWMI = $script:window.FindName("rbWMI")
         rbBitLocker = $script:window.FindName("rbBitLocker")
+        rbKerberosKDC = $script:window.FindName("rbKerberosKDC")
         cbSource = $script:window.FindName("cbSource")
         txtComputer = $script:window.FindName("txtComputer")
         dpStart = $script:window.FindName("dpStart")

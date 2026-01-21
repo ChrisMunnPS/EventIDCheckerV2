@@ -1,13 +1,10 @@
-﻿# Enhanced Event Log Viewer v2.0
-
-
-function Initialize-EventHandlers {
+﻿function Initialize-EventHandlers {
     <#
     .SYNOPSIS
         Attaches all event handlers to UI controls
     #>
     
-    # Category selection changes - all 14 categories
+    # Category selection changes - all 15 categories
     $script:controls.rbAccountActivity.Add_Checked({ Update-EventIDComboBox })
     $script:controls.rbADAccountChanges.Add_Checked({ Update-EventIDComboBox })
     $script:controls.rbSecurityThreat.Add_Checked({ Update-EventIDComboBox })
@@ -22,6 +19,7 @@ function Initialize-EventHandlers {
     $script:controls.rbCodeIntegrity.Add_Checked({ Update-EventIDComboBox })
     $script:controls.rbWMI.Add_Checked({ Update-EventIDComboBox })
     $script:controls.rbBitLocker.Add_Checked({ Update-EventIDComboBox })
+    $script:controls.rbKerberosKDC.Add_Checked({ Update-EventIDComboBox })
     
     # Source selection changed
     $script:controls.cbSource.Add_SelectionChanged({
@@ -140,6 +138,10 @@ function Initialize-EventHandlers {
         }
     })
     
+   # Enhanced Event Log Viewer v2.0
+# Event Handlers - PART 2 (Continuation)
+# This continues from Part 1 - append this to the Initialize-EventHandlers function
+
     # Manage Files button
     $script:controls.btnManageFiles.Add_Click({
         if ($script:importedEVTXFiles.Count -eq 0) {
@@ -373,7 +375,7 @@ function Initialize-EventHandlers {
         $encodedQuery = [System.Uri]::EscapeDataString($searchQuery)
         
         try {
-            Start-Process "https://duckduckgo.com/?q=$encodedQuery"
+            Start-Process "https://www.google.com/search?q=$encodedQuery"
         } catch {
             [System.Windows.MessageBox]::Show(
                 "Error opening browser: $($_.Exception.Message)", 
@@ -445,8 +447,7 @@ function Initialize-EventHandlers {
         if ($selectedEvent) {
             $details = @"
 Event Details
-═════════════════════════════════════════════════════
-
+═══════════════════════════════════════════════════════════════
 Time Created:    $($selectedEvent.TimeCreated)
 Log Name:        $($selectedEvent.LogName)
 Source:          $($selectedEvent.Source)
@@ -455,8 +456,7 @@ Meaning:         $($selectedEvent.Meaning)
 Level:           $($selectedEvent.LevelDisplayName)
 
 Message:
-═════════════════════════════════════════════════════
-
+───────────────────────────────────────────────────────────────
 $($selectedEvent.Message)
 "@
             
@@ -469,3 +469,4 @@ $($selectedEvent.Message)
         }
     })
 }
+# END OF Initialize-EventHandlers FUNCTION

@@ -1,6 +1,3 @@
-# Enhanced Event Log Viewer v2.0
-# Helper Functions - SIMPLE VERSION (No Background Jobs)
-
 function Update-ImportedFilesDisplay {
     $count = $script:importedEVTXFiles.Count
     
@@ -85,6 +82,7 @@ function Get-SelectedCategory {
     if ($script:controls.rbCodeIntegrity.IsChecked) { return "CodeIntegrity" }
     if ($script:controls.rbWMI.IsChecked) { return "WMIActivity" }
     if ($script:controls.rbBitLocker.IsChecked) { return "BitLocker" }
+    if ($script:controls.rbKerberosKDC.IsChecked) { return "KerberosKDC" }
     return ""
 }
 

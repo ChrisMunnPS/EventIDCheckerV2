@@ -9,7 +9,7 @@
     
 .NOTES
     Version: 2.0 OPTIMIZED
-    Author: Christopher Munn
+    Author: Chris Munn
     Requires: PowerShell 5.1+, Administrator privileges for Security logs
 #>
 
@@ -52,7 +52,7 @@ try {
     Write-Error "Failed to load required script files: $($_.Exception.Message)"
     Write-Host ""
     Write-Host "Ensure all files are in the same directory:" -ForegroundColor Yellow
-    Write-Host "  - EventLogViewer_v2.ps1" -ForegroundColor Gray
+    Write-Host "  - EventLogViewer_V2.ps1" -ForegroundColor Gray
     Write-Host "  - EventLogViewer_Categories.ps1" -ForegroundColor Gray
     Write-Host "  - EventLogViewer_Functions.ps1" -ForegroundColor Gray
     Write-Host "  - EventLogViewer_UI.ps1" -ForegroundColor Gray
@@ -93,9 +93,9 @@ try {
     Write-Host ""
     Write-Host "Tips:" -ForegroundColor Yellow
     Write-Host "  • Import EVTX files to analyze offline logs" -ForegroundColor Gray
-    Write-Host "  • Search uses XPath filtering for speed" -ForegroundColor Gray
-    Write-Host "  • Background jobs keep UI responsive" -ForegroundColor Gray
+    Write-Host "  • Search uses FilterHashtable for speed" -ForegroundColor Gray
     Write-Host "  • Use Stop button to cancel searches" -ForegroundColor Gray
+    Write-Host "  • 15 event categories including Kerberos/KDC" -ForegroundColor Gray
     Write-Host ""
     
     # Show the window (blocking call)
