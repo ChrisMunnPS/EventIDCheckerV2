@@ -7,6 +7,8 @@
 
 A powerful GUI-based Windows Event Log analysis tool designed for Security Operations Centers (SOC), forensic analysts, and system administrators. Search and analyze event logs from both live machines and imported EVTX files with an intuitive interface.
 
+![Event Log Viewer](https://via.placeholder.com/800x400/2C3E50/ECF0F1?text=Enhanced+Event+Log+Viewer+v2.0)
+
 ---
 
 ## 📋 Executive Summary
@@ -18,12 +20,13 @@ Enhanced Event Log Viewer v2.0 is a comprehensive PowerShell-based GUI applicati
 ### 🎯 Key Features at a Glance
 
 - **🖥️ Dual Source Support**: Query live machines or analyze imported EVTX files
-- **🛡️ 14 Preconfigured Categories**: From basic account activity to advanced Sysmon telemetry
+- **🛡️ 15 Preconfigured Categories**: From basic account activity to advanced Sysmon telemetry and Kerberos security
 - **⚡ Optimized Performance**: FilterHashtable queries and pagination for handling large datasets
 - **📊 Multiple Export Formats**: CSV and Excel export capabilities
 - **🔄 Auto-Refresh**: Real-time monitoring with configurable intervals
 - **🎨 User-Friendly Interface**: Intuitive GUI with color-coded event categories
 - **🔎 Advanced Filtering**: Filter by date range, event ID, and text search
+- **🔐 Kerberos Security**: NEW - Track weak RC4 encryption and KDC issues
 
 ### 👥 Who Should Use This?
 
@@ -32,6 +35,7 @@ Enhanced Event Log Viewer v2.0 is a comprehensive PowerShell-based GUI applicati
 - **System Administrators**: Troubleshoot server health and application issues
 - **Incident Responders**: Quickly triage and export relevant event data
 - **IT Auditors**: Review authentication and access control events
+- **Active Directory Admins**: Monitor Kerberos encryption and KDC health
 
 ### ⏱️ Quick Start
 
@@ -84,6 +88,7 @@ Enhanced Event Log Viewer v2.0 is a comprehensive PowerShell-based GUI applicati
 - **Administrator privileges** are required to access Security event logs
 - **Excel export** requires Microsoft Excel to be installed
 - For **Sysmon logs**, ensure Sysmon is installed and configured on target systems
+- **Kerberos/KDC events** (Event ID 205) only appear on Domain Controllers
 
 ---
 
@@ -91,7 +96,7 @@ Enhanced Event Log Viewer v2.0 is a comprehensive PowerShell-based GUI applicati
 
 ### 🗂️ Event Categories
 
-The tool organizes events into 14 specialized categories:
+The tool organizes events into **15 specialized categories**:
 
 #### **Windows Security Events** (Standard)
 | Category | Events Tracked | Use Case |
@@ -118,6 +123,39 @@ The tool organizes events into 14 specialized categories:
 | ✅ **Code Integrity** | Driver validation, unsigned code | Detect rootkits and malware |
 | 🔧 **WMI Activity** | WMI queries, event registrations | Identify WMI-based attacks |
 | 🔒 **BitLocker** | Encryption status, unlock failures | Track drive encryption |
+| 🔐 **Kerberos/KDC** ⭐ **NEW** | RC4 encryption, KDC certificates, processing errors | Secure Kerberos infrastructure |
+
+### 🆕 NEW: Kerberos/KDC Category
+
+The latest addition focuses on Active Directory authentication security:
+
+**Event IDs Included:**
+- **205** - Service account using weak RC4 encryption ⚠️ **CRITICAL**
+- **206** - KDC certificate about to expire
+- **207** - KDC certificate expired
+- **27** - KDC failed to find suitable certificate
+- **28** - KDC using self-signed certificate
+- **29** - KDC certificate missing Extended Key Usage
+- **30** - KDC received invalid request
+- **31** - KDC processing error
+- **32** - KDC unable to generate referral
+
+**Why Event ID 205 Matters:**
+```
+⚠️ SECURITY RISK: RC4 encryption is cryptographically weak
+✅ COMPLIANCE: PCI DSS, HIPAA, SOX may require strong encryption
+🎯 DETECTION: Identify accounts vulnerable to credential attacks
+📊 AUDIT: Document encryption standards before disabling RC4
+```
+
+**Remediation for Event ID 205:**
+```powershell
+# Update service account to use AES encryption
+Set-ADUser -Identity "ServiceAccountName" -KerberosEncryptionType AES128,AES256
+
+# Verify the change
+Get-ADUser "ServiceAccountName" -Properties msDS-SupportedEncryptionTypes
+```
 
 ### 🎛️ Search Capabilities
 
@@ -230,6 +268,26 @@ Analyze EVTX files collected from offline systems or incident response.
 
 ---
 
+### Example 5: 🆕 Auditing Weak Kerberos Encryption
+
+**Scenario**: Find service accounts using RC4 before disabling it domain-wide
+
+```
+1. Select "Kerberos/KDC" category
+2. Choose Event ID: "205 - Service account using weak RC4 encryption"
+3. Date range: Last 30 days
+4. Click "Search"
+5. Document all accounts for remediation
+```
+
+**Action items**:
+- Create inventory of affected service accounts
+- Test AES encryption compatibility
+- Update accounts to use AES128/AES256
+- Disable RC4 via Group Policy once all accounts updated
+
+---
+
 ## 🔧 Technical Details
 
 ### Architecture
@@ -238,7 +296,7 @@ The application is modular, consisting of 5 interconnected PowerShell scripts:
 
 ```
 EventLogViewer_V2.ps1 (Main)
-├── EventLogViewer_Categories.ps1    # Event ID definitions
+├── EventLogViewer_Categories.ps1    # Event ID definitions (15 categories)
 ├── EventLogViewer_Functions.ps1     # Search & processing logic
 ├── EventLogViewer_UI.ps1            # XAML-based GUI
 └── EventLogViewer_Handlers.ps1      # Button/event handlers
@@ -278,6 +336,11 @@ Each category contains specific event IDs with human-readable descriptions:
 4634 → "Logoff"
 4648 → "Explicit credentials used"
 4768 → "Kerberos TGT request"
+
+# Example: NEW Kerberos/KDC category
+205 → "Service account using weak RC4 encryption"
+206 → "KDC certificate about to expire"
+207 → "KDC certificate expired"
 ```
 
 This eliminates the need to memorize event ID numbers.
@@ -289,28 +352,32 @@ This eliminates the need to memorize event ID numbers.
 ### Main Window Layout
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  [Category Selection: 14 radio buttons across 3 rows]   │
-├─────────────────────────────────────────────────────────┤
-│  Source: [Live/Imported]  Computer: [____]              │
-│  Start Date: [____]  End Date: [____]                   │
-│  Event ID: [Dropdown]  Text Search: [____]              │
-├─────────────────────────────────────────────────────────┤
-│  [Search] [Stop] [Clear] | [Import] [Manage Files]      │
-│  [Export CSV] [Export Excel] [Web Search] [Auto-Refresh]│
-├─────────────────────────────────────────────────────────┤
-│  Status: "Showing 1-100 of 4,177 events"                │
-├─────────────────────────────────────────────────────────┤
-│  ┌───────────────────────────────────────────────────┐  │
-│  │   [Event Grid - 7 columns]                        │  │
-│  │   Time | Log | Source | ID | Meaning | Level | Msg│  │
-│  │   ─────────────────────────────────────────────── │  │
-│  │   2025-01-16 14:32:18 | Security | ...            │  │
-│  │   2025-01-16 14:31:05 | Security | ...            │  │
-│  └───────────────────────────────────────────────────┘  │
-├─────────────────────────────────────────────────────────┤
-│  [First] [Prev]  Page 1 of 42  [Next] [Last]  Per Page  │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  [Windows Security Events: 5 categories]                    │
+├─────────────────────────────────────────────────────────────┤
+│  [SOC and Forensic Logs: 5 categories]                      │
+├─────────────────────────────────────────────────────────────┤
+│  [Advanced Monitoring: 5 categories including Kerberos]     │
+├─────────────────────────────────────────────────────────────┤
+│  Source: [Live/Imported]  Computer: [____]                  │
+│  Start Date: [____]  End Date: [____]                       │
+│  Event ID: [Dropdown]  Text Search: [____]                  │
+├─────────────────────────────────────────────────────────────┤
+│  [Search] [Stop] [Clear] | [Import] [Manage Files]          │
+│  [Export CSV] [Export Excel] [Web Search] [Auto-Refresh]    │
+├─────────────────────────────────────────────────────────────┤
+│  Status: "Showing 1-100 of 4,177 events"                    │
+├─────────────────────────────────────────────────────────────┤
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │   [Event Grid - 7 columns]                           │   │
+│  │   Time | Log | Source | ID | Meaning | Level | Msg   │   │
+│  │   ───────────────────────────────────────────────────│   │
+│  │   2025-01-16 14:32:18 | Security | ...               │   │
+│  │   2025-01-16 14:31:05 | Security | ...               │   │
+│  └───────────────────────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────┤
+│  [First] [Prev]  Page 1 of 42  [Next] [Last]  Per Page    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Color Coding
@@ -319,6 +386,8 @@ This eliminates the need to memorize event ID numbers.
 - **Red Stop Button**: Cancel running search
 - **Yellow Status Bar**: Shows imported file count
 - **Blue Status Text**: Real-time operation status
+- **Cornsilk Background**: SOC/Forensic logs section
+- **Light Blue Background**: Advanced Monitoring section (includes Kerberos)
 - **Alternating Rows**: Gray/white for readability
 - **Hover Effect**: Light blue highlight
 
@@ -354,6 +423,18 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 sysmon64.exe -accepteula -i
 ```
 
+#### ❌ No Event ID 205 (Kerberos RC4) Found
+**Problem**: Kerberos/KDC events don't appear  
+**Solution**: 
+- Event ID 205 only logs on **Domain Controllers**, not workstations
+- Ensure you're searching the **System** log (automatic with category selection)
+- If no events found, congratulations! Your environment isn't using RC4
+
+```powershell
+# To manually check for RC4 usage:
+Get-WinEvent -FilterHashtable @{LogName='System'; ID=205} -MaxEvents 10
+```
+
 #### ❌ Excel Export Fails
 **Problem**: "Excel is not installed" error  
 **Solution**: Use CSV export or install Microsoft Excel
@@ -379,6 +460,13 @@ Test-WSMan -ComputerName SERVER01
 - Import files to local disk (not network share)
 - Increase RAM allocation
 
+#### ❌ Pagination Not Visible
+**Problem**: Can't see page navigation buttons  
+**Solution**: 
+- Ensure you're using the latest version (v2.0+)
+- The pagination bar is now always visible at the bottom
+- Try maximizing the window
+
 ---
 
 ## 🔐 Security Considerations
@@ -388,6 +476,7 @@ Test-WSMan -ComputerName SERVER01
 - **Local Security Log**: Administrator or "Manage auditing and security log" right
 - **Remote Queries**: Member of Administrators group on target system
 - **EVTX Files**: Read access to file location
+- **Kerberos Events**: Domain Controller access for Event ID 205
 
 ### Best Practices
 
@@ -396,6 +485,7 @@ Test-WSMan -ComputerName SERVER01
 3. **Audit Tool Usage**: Log who runs searches and what data is exported
 4. **Protect Exports**: CSV/Excel files may contain sensitive information
 5. **Use Read-Only Accounts**: For forensic analysis, avoid write access
+6. **Monitor RC4 Usage**: Regular Event ID 205 audits before disabling RC4
 
 ---
 
@@ -403,17 +493,13 @@ Test-WSMan -ComputerName SERVER01
 
 ### Learning Resources
 
-- [Microsoft Event ID](https://learn.microsoft.com/en-us/shows/inside/event-viewer)
+- [Microsoft Event ID Documentation](https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/audit-policy)
 - [Sysmon Configuration Guide](https://github.com/SwiftOnSecurity/sysmon-config)
 - [Windows Event Log Reference](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
 - [SANS Digital Forensics Posters](https://www.sans.org/posters/)
+- [Kerberos Encryption Types](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-configure-encryption-types-allowed-for-kerberos)
+- [Disabling RC4 in Active Directory](https://techcommunity.microsoft.com/t5/ask-the-directory-services-team/weak-kerberos-encryption-types-and-you/ba-p/400520)
 
-### Related Tools
-
-- **Event Log Explorer**: Commercial GUI tool
-- **Chainsaw**: Rust-based CLI event log analyzer
-- **Hayabusa**: Fast threat hunting tool for EVTX files
-- **EvtxECmd**: Eric Zimmerman's command-line EVTX parser
 
 ---
 
@@ -467,6 +553,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Microsoft Sysinternals team for Sysmon
 - PowerShell community for WPF/XAML examples
 - Security researchers for event ID documentation
+- Active Directory community for Kerberos best practices
 - Contributors and users who provide feedback
 
 ---
@@ -479,12 +566,62 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## 🗺️ Roadmap
 
+### Recently Added (v2.0)
+
+- ✅ **Kerberos/KDC Category**: Track weak RC4 encryption (Event ID 205)
+- ✅ **Fixed Pagination**: Always visible navigation bar
+- ✅ **Improved Performance**: Optimized EVTX file searching
+- ✅ **15 Event Categories**: Expanded from 14 to 15
+
+
+
+## 📋 Version History
+
+### v2.0 (Current) - January 2025
+- ✅ Added Kerberos/KDC category with Event ID 205
+- ✅ Fixed pagination visibility issues
+- ✅ Improved DataGrid layout and performance
+- ✅ 15 total event categories
+- ✅ Enhanced EVTX file import with auto date detection
+
+### v1.0 - 2024
+- 14 event categories
+- Basic event log searching
+- CSV/Excel export
+- Live machine and EVTX file support
+
+---
+
+## 🔍 Event Category Quick Reference
+
+| # | Category | Log Source | Key Event IDs | Primary Use |
+|---|----------|-----------|---------------|-------------|
+| 1 | Account Activity | Security | 4624, 4625, 4768, 4769 | Authentication tracking |
+| 2 | AD Account Changes | Security | 4720, 4726, 4732, 4740 | User lifecycle |
+| 3 | Security Threats | Security | 1102, 4688, 5140 | Threat detection |
+| 4 | Server Health | System | 41, 6008, 1074 | Reliability |
+| 5 | Application Issues | Application | 1000, 1001, 1002 | App debugging |
+| 6 | Sysmon | Sysmon/Operational | 1, 3, 7, 10, 11 | Threat hunting |
+| 7 | PowerShell | PowerShell/Operational | 4103, 4104 | Script monitoring |
+| 8 | Defender | Defender/Operational | 1006, 1116, 1117 | Malware detection |
+| 9 | Firewall | Firewall/Firewall | 2003, 2004, 2005 | Network security |
+| 10 | Task Scheduler | TaskScheduler/Operational | 106, 129, 141 | Persistence |
+| 11 | Remote Desktop | TerminalServices | 1149, 261, 1158 | RDP monitoring |
+| 12 | Code Integrity | CodeIntegrity/Operational | 3001, 3004 | Rootkit detection |
+| 13 | WMI Activity | WMI-Activity/Operational | 5857, 5859, 5861 | WMI attacks |
+| 14 | BitLocker | BitLocker/Management | 24577, 24578 | Encryption |
+| 15 | **Kerberos/KDC** ⭐ | System | **205**, 206, 207 | **Auth security** |
+
+---
 
 <div align="center">
 
 ### 💙 If this tool helped you, please consider giving it a ⭐!
 
 **Made with ❤️ for the cybersecurity community**
+
+### 🔐 Secure Your Active Directory - Track RC4 Encryption Today!
 
 </div>
