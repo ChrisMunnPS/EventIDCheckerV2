@@ -517,7 +517,7 @@ Contributions are welcome! Here's how you can help:
 
 ```powershell
 # Fork the repository
-git clone https://github.com/YourUsername/EventIDCheckerV2.git
+git clone https://github.com/ChrisMunnPS/EventIDCheckerV2.git
 
 # Create a feature branch
 git checkout -b feature/new-category
