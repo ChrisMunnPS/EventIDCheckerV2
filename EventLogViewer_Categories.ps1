@@ -1,12 +1,8 @@
-# Enhanced Event Log Viewer v2.0
-# Category Definitions - Save as: EventLogViewer_Categories.ps1
-# COMPLETE FILE - All event categories and definitions
-# Includes SOC/Forensic analyst logs (Sysmon, PowerShell, Defender, etc.)
-
-# Define event categories with their associated log names and event IDs
+# Define event categories with their associated log names, event IDs, and providers
 $script:categories = @{
     "AccountActivity" = @{ 
         Log = "Security"
+        Provider = "Microsoft-Windows-Security-Auditing"
         IDs = @(
             @{ ID = 4624; Meaning = "Successful logon" }
             @{ ID = 4625; Meaning = "Failed logon attempt" }
@@ -23,6 +19,7 @@ $script:categories = @{
     
     "ADAccountChanges" = @{ 
         Log = "Security"
+        Provider = "Microsoft-Windows-Security-Auditing"
         IDs = @(
             @{ ID = 4720; Meaning = "User account created" }
             @{ ID = 4722; Meaning = "User account enabled" }
@@ -41,12 +38,13 @@ $script:categories = @{
     
     "SecurityThreatIndicators" = @{ 
         Log = "Security"
+        Provider = "Microsoft-Windows-Security-Auditing"
         IDs = @(
-            @{ ID = 1102; Meaning = "Audit log cleared" }
-            @{ ID = 2886; Meaning = "LDAP unsigned/simple bind detected" }
-            @{ ID = 2887; Meaning = "Count of unsigned/simple bind attempts" }
-            @{ ID = 2889; Meaning = "Source of unsigned/simple bind" }
-            @{ ID = 1644; Meaning = "Expensive LDAP query detected" }
+            @{ ID = 1102; Meaning = "Audit log cleared"; Provider = "Microsoft-Windows-Eventlog" }
+            @{ ID = 2886; Meaning = "LDAP unsigned/simple bind detected"; Provider = "Microsoft-Windows-ActiveDirectory_DomainService" }
+            @{ ID = 2887; Meaning = "Count of unsigned/simple bind attempts"; Provider = "Microsoft-Windows-ActiveDirectory_DomainService" }
+            @{ ID = 2889; Meaning = "Source of unsigned/simple bind"; Provider = "Microsoft-Windows-ActiveDirectory_DomainService" }
+            @{ ID = 1644; Meaning = "Expensive LDAP query detected"; Provider = "Microsoft-Windows-ActiveDirectory_DomainService" }
             @{ ID = 4627; Meaning = "Group membership information" }
             @{ ID = 4663; Meaning = "Access to an object" }
             @{ ID = 4688; Meaning = "Process created" }
@@ -58,33 +56,36 @@ $script:categories = @{
     
     "ServerHealthReliability" = @{ 
         Log = "System"
+        Provider = $null  # Multiple providers
         IDs = @(
-            @{ ID = 41; Meaning = "Kernel-Power: unexpected restart/shutdown" }
-            @{ ID = 55; Meaning = "NTFS file system corruption detected" }
-            @{ ID = 6005; Meaning = "Event log service started" }
-            @{ ID = 6006; Meaning = "Event log service stopped" }
-            @{ ID = 6008; Meaning = "Unexpected shutdown" }
-            @{ ID = 6009; Meaning = "System startup information" }
-            @{ ID = 1074; Meaning = "System shutdown/restart initiated" }
-            @{ ID = 1014; Meaning = "DNS name resolution failure" }
-            @{ ID = 1058; Meaning = "Group Policy failure to read from DC" }
-            @{ ID = 5719; Meaning = "Netlogon: no DC available" }
+            @{ ID = 41; Meaning = "Kernel-Power: unexpected restart/shutdown"; Provider = "Microsoft-Windows-Kernel-Power" }
+            @{ ID = 55; Meaning = "NTFS file system corruption detected"; Provider = "Ntfs" }
+            @{ ID = 6005; Meaning = "Event log service started"; Provider = "EventLog" }
+            @{ ID = 6006; Meaning = "Event log service stopped"; Provider = "EventLog" }
+            @{ ID = 6008; Meaning = "Unexpected shutdown"; Provider = "EventLog" }
+            @{ ID = 6009; Meaning = "System startup information"; Provider = "EventLog" }
+            @{ ID = 1074; Meaning = "System shutdown/restart initiated"; Provider = "User32" }
+            @{ ID = 1014; Meaning = "DNS name resolution failure"; Provider = "Microsoft-Windows-DNS-Client" }
+            @{ ID = 1058; Meaning = "Group Policy failure to read from DC"; Provider = "Microsoft-Windows-GroupPolicy" }
+            @{ ID = 5719; Meaning = "Netlogon: no DC available"; Provider = "NETLOGON" }
         )
     }
     
     "ApplicationLevelIssues" = @{ 
         Log = "Application"
+        Provider = $null  # Multiple providers
         IDs = @(
-            @{ ID = 1000; Meaning = "Application error (crash)" }
-            @{ ID = 1001; Meaning = "Application hang or bugcheck info" }
-            @{ ID = 1002; Meaning = "Application hang" }
-            @{ ID = 1309; Meaning = "ASP.NET application error (IIS)" }
-            @{ ID = 11707; Meaning = "Application installation" }
+            @{ ID = 1000; Meaning = "Application error (crash)"; Provider = "Application Error" }
+            @{ ID = 1001; Meaning = "Application hang or bugcheck info"; Provider = "Windows Error Reporting" }
+            @{ ID = 1002; Meaning = "Application hang"; Provider = "Application Hang" }
+            @{ ID = 1309; Meaning = "ASP.NET application error (IIS)"; Provider = "ASP.NET" }
+            @{ ID = 11707; Meaning = "Application installation"; Provider = "MsiInstaller" }
         )
     }
     
     "SysmonProcessActivity" = @{
         Log = "Microsoft-Windows-Sysmon/Operational"
+        Provider = "Microsoft-Windows-Sysmon"
         IDs = @(
             @{ ID = 1; Meaning = "Process creation" }
             @{ ID = 2; Meaning = "File creation time changed" }
@@ -118,6 +119,7 @@ $script:categories = @{
     
     "PowerShellActivity" = @{
         Log = "Microsoft-Windows-PowerShell/Operational"
+        Provider = "Microsoft-Windows-PowerShell"
         IDs = @(
             @{ ID = 4103; Meaning = "Module logging (pipeline execution)" }
             @{ ID = 4104; Meaning = "Script block logging" }
@@ -131,6 +133,7 @@ $script:categories = @{
     
     "DefenderThreats" = @{
         Log = "Microsoft-Windows-Windows Defender/Operational"
+        Provider = "Microsoft-Windows-Windows Defender"
         IDs = @(
             @{ ID = 1006; Meaning = "Malware detected" }
             @{ ID = 1007; Meaning = "Malware action taken" }
@@ -152,6 +155,7 @@ $script:categories = @{
     
     "WindowsFirewall" = @{
         Log = "Microsoft-Windows-Windows Firewall With Advanced Security/Firewall"
+        Provider = "Microsoft-Windows-Windows Firewall With Advanced Security"
         IDs = @(
             @{ ID = 2003; Meaning = "Firewall rule added" }
             @{ ID = 2004; Meaning = "Firewall rule modified" }
@@ -163,6 +167,7 @@ $script:categories = @{
     
     "TaskScheduler" = @{
         Log = "Microsoft-Windows-TaskScheduler/Operational"
+        Provider = "Microsoft-Windows-TaskScheduler"
         IDs = @(
             @{ ID = 106; Meaning = "Task registered" }
             @{ ID = 129; Meaning = "Task launched" }
@@ -174,6 +179,7 @@ $script:categories = @{
     
     "RemoteDesktop" = @{
         Log = "Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational"
+        Provider = "Microsoft-Windows-TerminalServices-RemoteConnectionManager"
         IDs = @(
             @{ ID = 1149; Meaning = "RDP authentication successful" }
             @{ ID = 261; Meaning = "RDP connection received" }
@@ -183,6 +189,7 @@ $script:categories = @{
     
     "CodeIntegrity" = @{
         Log = "Microsoft-Windows-CodeIntegrity/Operational"
+        Provider = "Microsoft-Windows-CodeIntegrity"
         IDs = @(
             @{ ID = 3001; Meaning = "Code integrity check failed" }
             @{ ID = 3002; Meaning = "Code integrity check passed" }
@@ -195,6 +202,7 @@ $script:categories = @{
     
     "WMIActivity" = @{
         Log = "Microsoft-Windows-WMI-Activity/Operational"
+        Provider = "Microsoft-Windows-WMI-Activity"
         IDs = @(
             @{ ID = 5857; Meaning = "WMI activity detected" }
             @{ ID = 5858; Meaning = "WMI error" }
@@ -206,6 +214,7 @@ $script:categories = @{
     
     "BitLocker" = @{
         Log = "Microsoft-Windows-BitLocker/BitLocker Management"
+        Provider = "Microsoft-Windows-BitLocker-API"
         IDs = @(
             @{ ID = 24577; Meaning = "BitLocker encryption started" }
             @{ ID = 24578; Meaning = "BitLocker encryption completed" }
@@ -217,16 +226,30 @@ $script:categories = @{
     
     "KerberosKDC" = @{
         Log = "System"
+        Provider = "Microsoft-Windows-Kdc"  # Specific provider for KDC events
         IDs = @(
-            @{ ID = 205; Meaning = "Service account using weak RC4 encryption" }
-            @{ ID = 206; Meaning = "KDC certificate about to expire" }
-            @{ ID = 207; Meaning = "KDC certificate expired" }
-            @{ ID = 27; Meaning = "KDC failed to find suitable certificate" }
-            @{ ID = 28; Meaning = "KDC using self-signed certificate" }
-            @{ ID = 29; Meaning = "KDC certificate missing Extended Key Usage" }
-            @{ ID = 30; Meaning = "KDC received invalid request" }
-            @{ ID = 31; Meaning = "KDC processing error" }
-            @{ ID = 32; Meaning = "KDC unable to generate referral" }
+            @{ ID = 205; Meaning = "Service account using weak RC4 encryption"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 206; Meaning = "KDC certificate about to expire"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 207; Meaning = "KDC certificate expired"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 27; Meaning = "KDC failed to find suitable certificate"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 28; Meaning = "KDC using self-signed certificate"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 29; Meaning = "KDC certificate missing Extended Key Usage"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 30; Meaning = "KDC received invalid request"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 31; Meaning = "KDC processing error"; Provider = "Microsoft-Windows-Kdc" }
+            @{ ID = 32; Meaning = "KDC unable to generate referral"; Provider = "Microsoft-Windows-Kdc" }
         )
     }
 }
+
+<#
+.NOTES
+Event ID Conflict Resolution:
+- Each event now includes Provider information where conflicts exist
+- Event ID 27: Sysmon (File block) vs KDC (Cert not found) - resolved by provider
+- Event ID 28: Sysmon (File shredding) vs KDC (Self-signed cert) - resolved by provider
+- Event ID 55: Kernel-Processor-Power vs NTFS corruption - resolved by provider (Ntfs)
+- Event ID 41: Kernel-Power shutdown - specified provider for accuracy
+- Event ID 1102: Security log cleared - specified Eventlog provider
+
+Search functions will filter by both Log and Provider (when specified) to eliminate conflicts.
+#>

@@ -165,10 +165,34 @@ function Invoke-LiveMachineSearch {
             EndTime = $end
         }
         
+        # Add provider filter if specified at category level
+        if ($cat.Provider) {
+            $filter['ProviderName'] = $cat.Provider
+        }
+        
         $events = if ($computer -ne "localhost") {
             Get-WinEvent -FilterHashtable $filter -ComputerName $computer -ErrorAction Stop
         } else {
             Get-WinEvent -FilterHashtable $filter -ErrorAction Stop
+        }
+        
+        # Additional provider filtering for events with specific providers
+        if ($events) {
+            $filteredEvents = @()
+            foreach ($evt in $events) {
+                $eventDef = $cat.IDs | Where-Object { $_.ID -eq $evt.Id }
+                
+                # If event has specific provider requirement, check it
+                if ($eventDef.Provider) {
+                    if ($evt.ProviderName -eq $eventDef.Provider) {
+                        $filteredEvents += $evt
+                    }
+                } else {
+                    # No specific provider requirement
+                    $filteredEvents += $evt
+                }
+            }
+            $events = $filteredEvents
         }
         
         if (-not $script:searchCancelled) {
@@ -223,6 +247,11 @@ function Invoke-ImportedFileSearch {
                     ID = $eventIDs
                 }
                 
+                # Add provider filter if specified at category level
+                if ($cat.Provider) {
+                    $filterHash['ProviderName'] = $cat.Provider
+                }
+                
                 # Only add date filter if it's not the default range
                 if ($start -ne [DateTime]::MinValue) {
                     $filterHash['StartTime'] = $start
@@ -234,8 +263,19 @@ function Invoke-ImportedFileSearch {
                 $events = Get-WinEvent -FilterHashtable $filterHash -ErrorAction SilentlyContinue
                 
                 if ($events) {
+                    # Additional provider filtering for events with specific providers
                     foreach ($evt in $events) {
-                        $null = $allFoundEvents.Add($evt)
+                        $eventDef = $cat.IDs | Where-Object { $_.ID -eq $evt.Id }
+                        
+                        # If event has specific provider requirement, check it
+                        if ($eventDef.Provider) {
+                            if ($evt.ProviderName -eq $eventDef.Provider) {
+                                $null = $allFoundEvents.Add($evt)
+                            }
+                        } else {
+                            # No specific provider requirement
+                            $null = $allFoundEvents.Add($evt)
+                        }
                     }
                 }
                 
@@ -251,7 +291,16 @@ function Invoke-ImportedFileSearch {
                     
                     if ($events) {
                         foreach ($evt in $events) {
-                            $null = $allFoundEvents.Add($evt)
+                            $eventDef = $cat.IDs | Where-Object { $_.ID -eq $evt.Id }
+                            
+                            # Provider filtering
+                            if ($eventDef.Provider) {
+                                if ($evt.ProviderName -eq $eventDef.Provider) {
+                                    $null = $allFoundEvents.Add($evt)
+                                }
+                            } else {
+                                $null = $allFoundEvents.Add($evt)
+                            }
                         }
                     }
                 } catch {

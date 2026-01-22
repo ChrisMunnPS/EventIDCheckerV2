@@ -447,7 +447,7 @@
         if ($selectedEvent) {
             $details = @"
 Event Details
-═══════════════════════════════════════════════════════════════
+═════════════════════════════════════════════════════
 Time Created:    $($selectedEvent.TimeCreated)
 Log Name:        $($selectedEvent.LogName)
 Source:          $($selectedEvent.Source)
@@ -456,7 +456,7 @@ Meaning:         $($selectedEvent.Meaning)
 Level:           $($selectedEvent.LevelDisplayName)
 
 Message:
-───────────────────────────────────────────────────────────────
+═════════════════════════════════════════════════════
 $($selectedEvent.Message)
 "@
             
