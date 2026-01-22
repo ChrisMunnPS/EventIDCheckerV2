@@ -369,14 +369,14 @@ This eliminates the need to memorize event ID numbers.
 │  Status: "Showing 1-100 of 4,177 events"                    │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │   [Event Grid - 7 columns]                           │   │
-│  │   Time | Log | Source | ID | Meaning | Level | Msg   │   │
-│  │   ───────────────────────────────────────────────────│   │
-│  │   2025-01-16 14:32:18 | Security | ...               │   │
-│  │   2025-01-16 14:31:05 | Security | ...               │   │
+│  │   [Event Grid - 7 columns]                            │  │
+│  │   Time | Log | Source | ID | Meaning | Level | Msg    │  │
+│  │   ─────────────────────────────────────────────────── │  │
+│  │   2025-01-16 14:32:18 | Security | ...                │  │
+│  │   2025-01-16 14:31:05 | Security | ...                │  │
 │  └───────────────────────────────────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────┤
-│  [First] [Prev]  Page 1 of 42  [Next] [Last]  Per Page    │
+│  [First] [Prev]  Page 1 of 42  [Next] [Last]  Per Page      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -493,7 +493,7 @@ Test-WSMan -ComputerName SERVER01
 
 ### Learning Resources
 
-- [Microsoft Event ID Documentation](https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/audit-policy)
+- [Microsoft Event ID Documentation](https://learn.microsoft.com/en-us/windows/win32/eventlog/event-logging)
 - [Sysmon Configuration Guide](https://github.com/SwiftOnSecurity/sysmon-config)
 - [Windows Event Log Reference](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
 - [SANS Digital Forensics Posters](https://www.sans.org/posters/)
@@ -544,8 +544,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Chris Munn**
 
 - GitHub: [@ChrisMunnPS](https://github.com/ChrisMunnPS)
-- LinkedIn: [Connect](https://www.linkedin.com/in/chrismunnps)
-
+- LinkedIn: [Connect](https://www.linkedin.com/in/chrismunn)
+- WWWW: [Portfolio](https://chrismunnps.github.io)  
 ---
 
 ## ⭐ Acknowledgments
@@ -574,7 +574,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ **Fixed Pagination**: Always visible navigation bar
 - ✅ **Improved Performance**: Optimized EVTX file searching
 - ✅ **15 Event Categories**: Expanded from 14 to 15
-
+- ✅ Updated search function is filtered by log name, eventid, provider name
 
 
 ## 📋 Version History
